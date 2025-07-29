@@ -13,8 +13,12 @@ import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { DialogClose } from "@radix-ui/react-dialog";
 import { Eye, EyeOff } from "lucide-react";
+import { useDispatch } from "react-redux";
+import { register } from "@/State/Auth/Action";
+
 
 const Signup = () => {
+  const dispatch = useDispatch();
   const [showPassword, setShowPassword] = React.useState(false);
   const [showConfirmPassword, setShowConfirmPassword] = React.useState(false);
   const form = useForm({
@@ -27,6 +31,7 @@ const Signup = () => {
     },
   });
   const onSubmit = (data) => {
+    dispatch(register(data));
     console.log(data);
   };
   return (

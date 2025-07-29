@@ -23,8 +23,11 @@ import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { DialogClose } from "@radix-ui/react-dialog";
 import { Eye, EyeOff } from "lucide-react";
+import { useDispatch } from "react-redux";
+import { login } from "@/State/Auth/Action";
 
 const Signin = () => {
+  const dispatch = useDispatch();
   const [showPassword, setShowPassword] = React.useState(false);
   const [showConfirmPassword, setShowConfirmPassword] = React.useState(false);
   const form = useForm({
@@ -36,6 +39,7 @@ const Signin = () => {
     },
   });
   const onSubmit = (data) => {
+    dispatch(login(data));
     console.log(data);
   };
   return (

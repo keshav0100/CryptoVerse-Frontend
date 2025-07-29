@@ -1,4 +1,5 @@
 import { Route, Routes } from "react-router-dom";
+// Import all page components
 import Home from "./pages/Home/Home";
 import Navbar from "./pages/Navbar/Navbar";
 import Portfolio from "./pages/Portfolio/Portfolio";

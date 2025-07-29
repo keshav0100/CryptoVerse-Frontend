@@ -14,8 +14,10 @@ import {
 } from "@radix-ui/react-icons";
 import Sidebar from "./Sidebar";
 import { AvatarFallback } from "@radix-ui/react-avatar";
+import { useNavigate } from "react-router-dom";
 
 const Navbar = () => {
+  const navigate = useNavigate();
   return (
     <div className="px-2 py-3 border-b z-50 bg-background bg-opacity-0 sticky top-0 left-0 right-0 flex justify-between items-center font-extrabold">
       <div className="flex items-center gap-3">
@@ -49,7 +51,10 @@ const Navbar = () => {
             <Sidebar />
           </SheetContent>
         </Sheet>
-        <p className="font-extrabold text-sm lg:text-base cursor-pointer">
+        <p
+          className="font-extrabold text-sm lg:text-base cursor-pointer"
+          onClick={() => navigate("/")}
+        >
           CryptoVerse
         </p>
         <div className="p-0 ml-9">

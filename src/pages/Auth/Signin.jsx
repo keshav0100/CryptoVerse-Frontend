@@ -25,8 +25,10 @@ import { DialogClose } from "@radix-ui/react-dialog";
 import { Eye, EyeOff } from "lucide-react";
 import { useDispatch } from "react-redux";
 import { login } from "@/State/Auth/Action";
+import { useNavigate } from "react-router-dom";
 
 const Signin = () => {
+  const navigate = useNavigate();
   const dispatch = useDispatch();
   const [showPassword, setShowPassword] = React.useState(false);
   const [showConfirmPassword, setShowConfirmPassword] = React.useState(false);
@@ -39,7 +41,8 @@ const Signin = () => {
     },
   });
   const onSubmit = (data) => {
-    dispatch(login(data));
+    
+    dispatch(login({data,navigate}));
     console.log(data);
   };
   return (

@@ -20,6 +20,10 @@ export const register = (userData) => async (dispatch) => {
     const user = response.data;
     console.log(user);
     dispatch({ type: "REGISTER_SUCCESS", payload: user.jwt });
+    localStorage.setItem("jwt", user.jwt);
+    
+    // Immediately fetch user data after successful registration
+    dispatch(getUser(user.jwt));
   } catch (error) {
     dispatch({ type: "REGISTER_FAIL", payload: error.message });
     console.log(error);
@@ -30,10 +34,15 @@ export const login = (userData) => async (dispatch) => {
   dispatch({ type: "LOGIN_REQUEST" });
   const baseURL = "http://localhost:5454";
   try {
-    const response = await axios.post(`${baseURL}/auth/signin`, userData);
+    const response = await axios.post(`${baseURL}/auth/signin`, userData.data);
     const user = response.data;
     console.log(user);
     dispatch({ type: "LOGIN_SUCCESS", payload: user.jwt });
+    localStorage.setItem("jwt", user.jwt);
+    userData.navigate("/");
+    
+    // Immediately fetch user data after successful login
+    dispatch(getUser(user.jwt));
   } catch (error) {
     dispatch({ type: "LOGIN_FAIL", payload: error.message });
     console.log(error);
@@ -51,9 +60,14 @@ export const getUser = (jwt) => async (dispatch) => {
     });
     const user = response.data;
     console.log(user);
-    dispatch({ type: "GET_USER_SUCCESS", payload: user.jwt });
+    dispatch({ type: "GET_USER_SUCCESS", payload: user });
   } catch (error) {
     dispatch({ type: "GET_USER_FAIL", payload: error.message });
     console.log(error);
   }
+};
+
+export const logout = () => (dispatch) => {
+  localStorage.removeItem("jwt");
+  dispatch({ type: "LOGOUT" });
 };

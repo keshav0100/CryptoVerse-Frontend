@@ -1,5 +1,4 @@
 import { Route, Routes } from "react-router-dom";
-// Import all page components
 import Home from "./pages/Home/Home";
 import Navbar from "./pages/Navbar/Navbar";
 import Portfolio from "./pages/Portfolio/Portfolio";
@@ -13,12 +12,20 @@ import Profile from "./pages/Profile/Profile";
 import SearchCoin from "./pages/Search Coin/SearchCoin";
 import NotFound from "./pages/NotFound/NotFound";
 import Auth from "./pages/Auth/Auth";
+import { useDispatch, useSelector } from "react-redux";
+import { useEffect } from "react";
+import { getUser } from "./State/Auth/Action";
 
 function App() {
+  const { auth } = useSelector((store) => store);
+  const dispatch = useDispatch();
+  console.log("Auth State:", auth);
+  useEffect(() => {
+    dispatch(getUser(auth.jwt || localStorage.getItem("jwt")));
+  }, [auth.jwt]);
   return (
     <>
-      <Auth />
-      {true && (
+      {auth.user ? (
         <div>
           <Navbar />
           <Routes>
@@ -35,7 +42,9 @@ function App() {
             <Route path="*" element={<NotFound />} />
           </Routes>
         </div>
-      )}
+      ):
+      <Auth/>
+      }
     </>
   );
 }

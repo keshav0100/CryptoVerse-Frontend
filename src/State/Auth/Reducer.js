@@ -60,8 +60,7 @@ const authReducer = (state = initialState, action) => {
 
     case "LOGOUT":
       return {
-        ...initialState,
-        jwt: null,
+        ...initialState
       };
 
     default:

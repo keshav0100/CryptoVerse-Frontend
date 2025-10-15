@@ -12,7 +12,6 @@ import {
   GET_USER_SUCCESS,
 } from "./ActionTypes.jsx";
 
-
 export const register = (userData) => async (dispatch) => {
   dispatch({ type: REGISTER_REQUEST });
   const baseURL = "http://localhost:5454";
@@ -30,7 +29,14 @@ export const register = (userData) => async (dispatch) => {
   } catch (error) {
     dispatch({ type: REGISTER_FAIL, payload: error.message });
     console.log(error);
-    toast.error("Registration failed", { position: "top-right" });
+    // If backend indicates duplicate email (common HTTP 409) or specific message, show a targeted toast
+    const status = error?.response?.status;
+    const message = error?.response?.data?.message || error?.message || "Registration failed";
+    if (status === 409 || /email.*exist/i.test(message)) {
+      toast.error("Email already exists. Try logging in or use a different email.", { position: "top-right" });
+    } else {
+      toast.error(message, { position: "top-right" });
+    }
   }
 };
 

@@ -150,47 +150,21 @@ const Signup = () => {
                 {(() => {
                   const password = form.watch("password");
                   const confirm = form.watch("confirmPassword");
-                  if (confirm && confirm.length > 0 && password !== confirm) {
-                    return (
-                      <div
-                        className="text-red-500 mt-2"
-                        role="alert"
-                        aria-live="assertive"
-                      >
-                        Passwords do not match
-                      </div>
-                    );
+                    if (confirm && confirm.length > 0 && password !== confirm) {
+                      return (
+                        <div className="mt-2 flex justify-center" role="alert" aria-live="assertive">
+                            <span className="text-red-500 font-extrabold">Passwords do not match</span>
+                        </div>
+                      );
                   }
 
                   // show attractive success pill when passwords match
                   if (confirm && confirm.length > 0 && password === confirm) {
-                    return (
-                      <div className="mt-3" role="status" aria-live="polite">
-                        <div className="inline-flex items-center gap-3 px-4 py-2 rounded-full bg-gradient-to-r from-emerald-500 to-green-600 text-white shadow-lg transform transition duration-200 ease-out">
-                          <svg
-                            xmlns="http://www.w3.org/2000/svg"
-                            viewBox="0 0 20 20"
-                            fill="currentColor"
-                            className="w-5 h-5"
-                          >
-                            <path
-                              fillRule="evenodd"
-                              d="M16.707 5.293a1 1 0 010 1.414l-7.364 7.364a1 1 0 01-1.414 0L3.293 9.93a1 1 0 011.414-1.414l3.293 3.293 6.657-6.657a1 1 0 011.414 0z"
-                              clipRule="evenodd"
-                            />
-                          </svg>
-
-                          <div className="flex flex-col leading-tight">
-                            <span className="font-semibold">
-                              Great — passwords match!
-                            </span>
-                            <span className="text-xs opacity-90">
-                              You can safely continue
-                            </span>
-                          </div>
+                      return (
+                        <div className="mt-2 flex justify-center" role="status" aria-live="polite">
+                          <span className="text-green-600 font-extrabold">Passwords match</span>
                         </div>
-                      </div>
-                    );
+                      );
                   }
 
                   return null;

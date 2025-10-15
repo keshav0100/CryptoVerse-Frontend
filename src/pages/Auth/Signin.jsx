@@ -32,18 +32,15 @@ const Signin = () => {
   const dispatch = useDispatch();
   const { auth } = useSelector((state) => state);
   const [showPassword, setShowPassword] = React.useState(false);
-  const [showConfirmPassword, setShowConfirmPassword] = React.useState(false);
   const form = useForm({
     resolver: "",
     defaultValues: {
       email: "",
       password: "",
-      confirmPassword: "",
     },
   });
   const onSubmit = (data) => {
-    
-    dispatch(login({data,navigate}));
+    dispatch(login({ data, navigate }));
     console.log(data);
   };
   return (
@@ -96,39 +93,7 @@ const Signin = () => {
               </FormItem>
             )}
           />
-          <FormField
-            control={form.control}
-            name="confirmPassword"
-            render={({ field }) => (
-              <FormItem>
-                <FormControl>
-                  <div className="relative">
-                    <Input
-                      placeholder="Confirm Password"
-                      type={showConfirmPassword ? "text" : "password"}
-                      className="w-full border border-gray-700 p-5 placeholder:text-gray-700 pr-12"
-                      {...field}
-                    />
-                    <button
-                      type="button"
-                      onClick={() =>
-                        setShowConfirmPassword(!showConfirmPassword)
-                      }
-                      className="absolute right-3 top-1/2 transform -translate-y-1/2 text-gray-700 hover:text-gray-900"
-                    >
-                      {showConfirmPassword ? (
-                        <EyeOff size={20} />
-                      ) : (
-                        <Eye size={20} />
-                      )}
-                    </button>
-                  </div>
-                </FormControl>
-
-                <FormMessage />
-              </FormItem>
-            )}
-          />
+          {/* confirmPassword removed for login */}
 
           <Button
             className="w-full py-5 font-extrabold"

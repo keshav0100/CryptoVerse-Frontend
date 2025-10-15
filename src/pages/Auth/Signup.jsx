@@ -50,10 +50,14 @@ const Signup = () => {
     console.log(payload);
   };
   return (
-    <div className="px-5 py-2">
-      <h1 className="text-xl font-bold text-center mb-2">Register</h1>
-      <Form {...form}>
-        <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-6">
+    <div
+      className="min-h-screen flex items-center justify-center bg-cover bg-center"
+      style={{ backgroundImage: `url('/CrytoVerse.png')` }}
+    >
+      <div className="w-full max-w-md p-8 bg-white/80 dark:bg-black/60 rounded-lg shadow-md">
+        <h1 className="text-xl font-bold text-center mb-2">Register</h1>
+        <Form {...form}>
+          <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-6">
           <FormField
             control={form.control}
             name="fullName"
@@ -193,8 +197,9 @@ const Signup = () => {
               </Button>
             );
           })()}
-        </form>
-      </Form>
+          </form>
+        </Form>
+      </div>
     </div>
   );
 };

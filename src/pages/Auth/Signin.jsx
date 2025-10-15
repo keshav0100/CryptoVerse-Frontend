@@ -14,14 +14,15 @@ import {
 } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
+import { Eye, EyeOff } from "lucide-react";
 
-import { toast } from "sonner"; // ✅ Sonner toast
+import { toast } from "sonner"; // ✅ Clean toast
 import { login } from "@/State/Auth/Action";
 
-// ✅ Zod Validation Schema
+// ✅ Validation
 const SigninSchema = z.object({
   email: z.string().email("Enter a valid email"),
-  password: z.string().min(6, "Minimum 6 characters"),
+  password: z.string().min(6, "Min 6 characters"),
 });
 
 const Signin = () => {
@@ -36,7 +37,6 @@ const Signin = () => {
     defaultValues: { email: "", password: "" },
   });
 
-  // ✅ Submit function
   const onSubmit = (data) => {
     const toastId = toast.loading("Signing in...");
     dispatch(login({ data, navigate }))
@@ -46,7 +46,7 @@ const Signin = () => {
       );
   };
 
-  // ✅ Watch for auth errors
+  // Listen for auth change (login success/failure)
   useEffect(() => {
     if (auth.error && !auth.loading) {
       toast.error(
@@ -58,7 +58,7 @@ const Signin = () => {
   return (
     <Form {...form}>
       <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-4">
-        {/* Email Field */}
+        {/* Email */}
         <FormField
           control={form.control}
           name="email"
@@ -79,7 +79,7 @@ const Signin = () => {
           )}
         />
 
-        {/* Password Field */}
+        {/* Password */}
         <FormField
           control={form.control}
           name="password"
@@ -95,13 +95,12 @@ const Signin = () => {
                                placeholder:text-gray-300 focus:border-blue-500 focus:ring-2 focus:ring-blue-500/40"
                     {...field}
                   />
-                  {/* 👁 / 🙈 password toggle */}
                   <button
                     type="button"
                     onClick={() => setShowPassword((s) => !s)}
-                    className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-300 hover:text-white text-xl"
+                    className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-300 hover:text-white"
                   >
-                    {showPassword ? "🙈" : "👁️"}
+                    {showPassword ? <EyeOff size={20} /> : <Eye size={20} />}
                   </button>
                 </div>
               </FormControl>
@@ -110,7 +109,7 @@ const Signin = () => {
           )}
         />
 
-        {/* Submit Button */}
+        {/* Submit */}
         <Button
           type="submit"
           disabled={auth?.loading}

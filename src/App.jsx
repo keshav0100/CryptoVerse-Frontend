@@ -13,6 +13,7 @@ import SearchCoin from "./pages/Search Coin/SearchCoin";
 import NotFound from "./pages/NotFound/NotFound";
 import Auth from "./pages/Auth/Auth";
 import { useDispatch, useSelector } from "react-redux";
+import { Toaster } from "react-hot-toast";
 import { useEffect } from "react";
 import { getUser } from "./State/Auth/Action";
 
@@ -25,6 +26,26 @@ function App() {
   }, [auth.jwt]);
   return (
     <>
+      <Toaster
+        position="top-right"
+        toastOptions={{
+          // Default options for specific types
+          success: {
+            style: {
+              background: "#16a34a",
+              color: "#ffffff",
+              fontWeight: "700",
+            },
+          },
+          error: {
+            style: {
+              background: "#ef4444",
+              color: "#ffffff",
+              fontWeight: "700",
+            },
+          },
+        }}
+      />
       {auth.user ? (
         <div>
           <Navbar />
@@ -42,9 +63,9 @@ function App() {
             <Route path="*" element={<NotFound />} />
           </Routes>
         </div>
-      ):
-      <Auth/>
-      }
+      ) : (
+        <Auth />
+      )}
     </>
   );
 }

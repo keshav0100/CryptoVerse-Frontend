@@ -23,13 +23,14 @@ import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { DialogClose } from "@radix-ui/react-dialog";
 import { Eye, EyeOff } from "lucide-react";
-import { useDispatch } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 import { login } from "@/State/Auth/Action";
 import { useNavigate } from "react-router-dom";
 
 const Signin = () => {
   const navigate = useNavigate();
   const dispatch = useDispatch();
+  const { auth } = useSelector((state) => state);
   const [showPassword, setShowPassword] = React.useState(false);
   const [showConfirmPassword, setShowConfirmPassword] = React.useState(false);
   const form = useForm({
@@ -129,8 +130,12 @@ const Signin = () => {
             )}
           />
 
-          <Button className="w-full py-5 font-extrabold" type="submit">
-            Submit
+          <Button
+            className="w-full py-5 font-extrabold"
+            type="submit"
+            disabled={auth.loading}
+          >
+            {auth.loading ? "Loading..." : "Submit"}
           </Button>
         </form>
       </Form>

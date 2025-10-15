@@ -13,12 +13,13 @@ import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { DialogClose } from "@radix-ui/react-dialog";
 import { Eye, EyeOff } from "lucide-react";
-import { useDispatch } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 import { register } from "@/State/Auth/Action";
-
+import toast from "react-hot-toast";
 
 const Signup = () => {
   const dispatch = useDispatch();
+  const { auth } = useSelector((state) => state);
   const [showPassword, setShowPassword] = React.useState(false);
   const [showConfirmPassword, setShowConfirmPassword] = React.useState(false);
   const form = useForm({
@@ -31,8 +32,22 @@ const Signup = () => {
     },
   });
   const onSubmit = (data) => {
-    dispatch(register(data));
-    console.log(data);
+    // Validate passwords match on the client before dispatching
+    if (data.password !== data.confirmPassword) {
+      // Shouldn't happen because button is disabled, but keep safeguard
+      toast.error("Passwords do not match", { position: "top-right" });
+      return;
+    }
+
+    // Only send the fields the backend needs
+    const payload = {
+      fullName: data.fullName,
+      email: data.email,
+      password: data.password,
+    };
+
+    dispatch(register(payload));
+    console.log(payload);
   };
   return (
     <div className="px-5 py-2">
@@ -130,15 +145,80 @@ const Signup = () => {
                     </button>
                   </div>
                 </FormControl>
-
                 <FormMessage />
+                {/* Inline mismatch message - visible while user types */}
+                {(() => {
+                  const password = form.watch("password");
+                  const confirm = form.watch("confirmPassword");
+                  if (confirm && confirm.length > 0 && password !== confirm) {
+                    return (
+                      <div
+                        className="text-red-500 mt-2"
+                        role="alert"
+                        aria-live="assertive"
+                      >
+                        Passwords do not match
+                      </div>
+                    );
+                  }
+
+                  // show attractive success pill when passwords match
+                  if (confirm && confirm.length > 0 && password === confirm) {
+                    return (
+                      <div className="mt-3" role="status" aria-live="polite">
+                        <div className="inline-flex items-center gap-3 px-4 py-2 rounded-full bg-gradient-to-r from-emerald-500 to-green-600 text-white shadow-lg transform transition duration-200 ease-out">
+                          <svg
+                            xmlns="http://www.w3.org/2000/svg"
+                            viewBox="0 0 20 20"
+                            fill="currentColor"
+                            className="w-5 h-5"
+                          >
+                            <path
+                              fillRule="evenodd"
+                              d="M16.707 5.293a1 1 0 010 1.414l-7.364 7.364a1 1 0 01-1.414 0L3.293 9.93a1 1 0 011.414-1.414l3.293 3.293 6.657-6.657a1 1 0 011.414 0z"
+                              clipRule="evenodd"
+                            />
+                          </svg>
+
+                          <div className="flex flex-col leading-tight">
+                            <span className="font-semibold">
+                              Great — passwords match!
+                            </span>
+                            <span className="text-xs opacity-90">
+                              You can safely continue
+                            </span>
+                          </div>
+                        </div>
+                      </div>
+                    );
+                  }
+
+                  return null;
+                })()}
               </FormItem>
             )}
           />
 
-          <Button className="w-full py-5 font-extrabold" type="submit">
-            Submit
-          </Button>
+          {(() => {
+            const fullName = form.watch("fullName");
+            const email = form.watch("email");
+            const password = form.watch("password");
+            const confirm = form.watch("confirmPassword");
+            const allFilled = fullName && email && password && confirm;
+            const passwordsMatch = password === confirm;
+            const canSubmit = allFilled && passwordsMatch && !auth.loading;
+
+            return (
+              <Button
+                className="w-full py-5 font-extrabold"
+                type="submit"
+                disabled={!canSubmit}
+                aria-disabled={!canSubmit}
+              >
+                {auth.loading ? "Loading..." : "Submit"}
+              </Button>
+            );
+          })()}
         </form>
       </Form>
     </div>

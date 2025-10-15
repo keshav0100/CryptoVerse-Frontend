@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useEffect } from "react";
 import {
   Table,
   TableBody,
@@ -10,9 +10,13 @@ import {
 } from "@/components/ui/table";
 import { Avatar, AvatarImage } from "@/components/ui/avatar";
 import { useNavigate } from "react-router-dom";
+import { useDispatch } from "react-redux";
+import { getCoinList } from "@/State/Coin/Action";
 
-const AssetTable = () => {
+const AssetTable = ({ coin, category }) => {
+  const dispatch = useDispatch();
   const navigate = useNavigate();
+
   return (
     <Table>
       <TableHeader>
@@ -26,8 +30,12 @@ const AssetTable = () => {
         </TableRow>
       </TableHeader>
       <TableBody>
-        {[1, 1, 1, 1, 1, 1, 1, 1, 1].map((item, index) => (
-          <TableRow onClick={() => navigate(`/market/bitcoin`)} key={index} className="cursor-pointer">
+        {coin.map((item, index) => (
+          <TableRow
+            onClick={() => navigate(`/market/bitcoin`)}
+            key={index}
+            className="cursor-pointer"
+          >
             <TableCell className="font-medium">
               <div className="flex items-center gap-1">
                 <Avatar>

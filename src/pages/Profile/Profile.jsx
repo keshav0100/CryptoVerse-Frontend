@@ -12,8 +12,10 @@ import { VerifiedIcon } from "lucide-react";
 import React from "react";
 import { Button } from "@/components/ui/button";
 import AccountVerifyForm from "./AccountVerifyForm";
+import { useSelector } from "react-redux";
 
 const Profile = () => {
+  const { auth } = useSelector((store) => store);
   const handleEnableTwoStepVerification = () => {
     // Handle the form submission logic here
     console.log("Two step verification:");
@@ -23,26 +25,43 @@ const Profile = () => {
       <div className="pt-10 w-full lg:w-[60%]">
         <Card>
           <CardHeader className="pb-9 text-center font-extrabold">
-            <CardTitle>Your information</CardTitle>
+            <CardTitle className="text-xl">Your information</CardTitle>
           </CardHeader>
+
           <CardContent>
             <div className="lg:flex gap-32">
+              {/* Left column: 3 fields */}
               <div className="space-y-7">
                 <div className="flex">
                   <p className="w-[9rem]">Email:</p>
-                  <p className="text-gray-500">bansalkeshav1390@gmail.com</p>
+                  <p className="text-gray-500">{auth.user?.email}</p>
                 </div>
                 <div className="flex">
                   <p className="w-[9rem]">Full Name:</p>
-                  <p className="text-gray-500">Keshav Bansal</p>
+                  <p className="text-gray-500">{auth.user?.fullName}</p>
                 </div>
                 <div className="flex">
                   <p className="w-[9rem]">Date of Birth:</p>
-                  <p className="text-gray-500">01/01/1990</p>
+                  <p className="text-gray-500">
+                    {auth.user?.dateOfBirth || "01/01/1990"}
+                  </p>
+                </div>
+              </div>
+              {/* Right column: 3 fields */}
+              <div className="space-y-7 mt-7 lg:mt-0">
+                <div className="flex">
+                  <p className="w-[9rem]">Address:</p>
+                  <p className="text-gray-500">{auth.user?.address}</p>
+                </div>
+                <div className="flex">
+                  <p className="w-[9rem]">State:</p>
+                  <p className="text-gray-500">{auth.user?.state}</p>
                 </div>
                 <div className="flex">
                   <p className="w-[9rem]">Nationality:</p>
-                  <p className="text-gray-500">Indian</p>
+                  <p className="text-gray-500">
+                    {auth.user?.nationality || "Indian"}
+                  </p>
                 </div>
               </div>
             </div>

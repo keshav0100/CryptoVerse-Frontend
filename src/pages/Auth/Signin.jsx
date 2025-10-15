@@ -25,7 +25,7 @@ import { DialogClose } from "@radix-ui/react-dialog";
 import { Eye, EyeOff } from "lucide-react";
 import { useDispatch, useSelector } from "react-redux";
 import { login } from "@/State/Auth/Action";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, Link } from "react-router-dom";
 
 const Signin = () => {
   const navigate = useNavigate();
@@ -44,12 +44,10 @@ const Signin = () => {
     console.log(data);
   };
   return (
-    <div
-      className="min-h-screen flex items-center justify-center bg-cover bg-center"
-      style={{ backgroundImage: `url('/CrytoVerse.png')` }}
-    >
+    <div className="min-h-screen flex items-center justify-center py-8">
       <div className="w-full max-w-md p-8 bg-white/80 dark:bg-black/60 rounded-lg shadow-md">
-        <h1 className="text-xl font-bold text-center mb-2">Login</h1>
+        <h1 className="text-3xl font-bold text-center mb-2 text-black">CryptoVerse</h1>
+        <h2 className="text-xl font-semibold text-center mb-6 text-gray-700">Login</h2>
         <Form {...form}>
           <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-6">
           <FormField
@@ -108,6 +106,19 @@ const Signin = () => {
           </Button>
           </form>
         </Form>
+        
+        <div className="mt-4 text-center text-sm text-gray-600">
+          Don't have an account?{' '}
+          <Link to="/signup" className="font-semibold text-blue-600 hover:text-blue-500">
+            Sign Up
+          </Link>
+        </div>
+        
+        <div className="mt-3 text-center">
+          <Link to="/forgot-password" className="text-sm text-blue-600 hover:text-blue-500 font-medium">
+            Forgot Password?
+          </Link>
+        </div>
       </div>
     </div>
   );

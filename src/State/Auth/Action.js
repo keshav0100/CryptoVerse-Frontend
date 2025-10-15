@@ -16,11 +16,12 @@ export const register = (userData) => async (dispatch) => {
   dispatch({ type: REGISTER_REQUEST });
   const baseURL = "http://localhost:5454";
   try {
-    const response = await axios.post(`${baseURL}/auth/signup`, userData);
+    const response = await axios.post(`${baseURL}/auth/signup`, userData.payload);
     const user = response.data;
     console.log(user);
     dispatch({ type: REGISTER_SUCCESS, payload: user.jwt });
     localStorage.setItem("jwt", user.jwt);
+    userData.navigate("/");
     // show success toast for registration
     toast.success("Registered successfully", { position: "top-right" });
 

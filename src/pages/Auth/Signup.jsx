@@ -16,8 +16,10 @@ import { Eye, EyeOff } from "lucide-react";
 import { useDispatch, useSelector } from "react-redux";
 import { register } from "@/State/Auth/Action";
 import toast from "react-hot-toast";
+import { Link, useNavigate } from "react-router-dom";
 
 const Signup = () => {
+  const navigate = useNavigate();
   const dispatch = useDispatch();
   const { auth } = useSelector((state) => state);
   const [showPassword, setShowPassword] = React.useState(false);
@@ -46,16 +48,14 @@ const Signup = () => {
       password: data.password,
     };
 
-    dispatch(register(payload));
+    dispatch(register({ payload, navigate }));
     console.log(payload);
   };
   return (
-    <div
-      className="min-h-screen flex items-center justify-center bg-cover bg-center"
-      style={{ backgroundImage: `url('/CrytoVerse.png')` }}
-    >
+    <div className="min-h-screen flex items-center justify-center py-8">
       <div className="w-full max-w-md p-8 bg-white/80 dark:bg-black/60 rounded-lg shadow-md">
-        <h1 className="text-xl font-bold text-center mb-2">Register</h1>
+        <h1 className="text-3xl font-bold text-center mb-2 text-black">CryptoVerse</h1>
+        <h2 className="text-xl font-semibold text-center mb-6 text-gray-700">Register</h2>
         <Form {...form}>
           <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-6">
           <FormField
@@ -199,6 +199,13 @@ const Signup = () => {
           })()}
           </form>
         </Form>
+        
+        <div className="mt-4 text-center text-sm text-gray-600">
+          Already have an account?{' '}
+          <Link to="/signin" className="font-semibold text-blue-600 hover:text-blue-500">
+            Sign In
+          </Link>
+        </div>
       </div>
     </div>
   );

@@ -16,7 +16,10 @@ export const register = (userData) => async (dispatch) => {
   dispatch({ type: REGISTER_REQUEST });
   const baseURL = "http://localhost:5454";
   try {
-    const response = await axios.post(`${baseURL}/auth/signup`, userData.payload);
+    const response = await axios.post(
+      `${baseURL}/auth/signup`,
+      userData.payload
+    );
     const user = response.data;
     console.log(user);
     dispatch({ type: REGISTER_SUCCESS, payload: user.jwt });
@@ -32,9 +35,13 @@ export const register = (userData) => async (dispatch) => {
     console.log(error);
     // If backend indicates duplicate email (common HTTP 409) or specific message, show a targeted toast
     const status = error?.response?.status;
-    const message = error?.response?.data?.message || error?.message || "Registration failed";
+    const message =
+      error?.response?.data?.message || error?.message || "Registration failed";
     if (status === 409 || /email.*exist/i.test(message)) {
-      toast.error("Email already exists. Try logging in or use a different email.", { position: "top-right" });
+      toast.error(
+        "Email already exists. Try logging in or use a different email.",
+        { position: "top-right" }
+      );
     } else {
       toast.error(message, { position: "top-right" });
     }

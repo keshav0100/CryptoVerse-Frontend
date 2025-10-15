@@ -1,241 +1,242 @@
+// src/pages/Auth/Signup.jsx
+import React, { useState, useEffect } from "react";
+import { useDispatch, useSelector } from "react-redux";
+import { useNavigate, Link } from "react-router-dom";
+import { useForm } from "react-hook-form";
+import { z } from "zod";
+import { zodResolver } from "@hookform/resolvers/zod";
+
 import {
   Form,
-  FormControl,
-  FormDescription,
   FormField,
   FormItem,
-  FormLabel,
+  FormControl,
   FormMessage,
 } from "@/components/ui/form";
-import { useForm } from "react-hook-form";
-import React from "react";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
-import { DialogClose } from "@radix-ui/react-dialog";
-import { Eye, EyeOff } from "lucide-react";
-import { useDispatch, useSelector } from "react-redux";
-import { register } from "@/State/Auth/Action";
-import toast from "react-hot-toast";
-import { Link, useNavigate } from "react-router-dom";
+
+import { toast } from "sonner";
+import { register as registerAction } from "@/State/Auth/Action";
+
+// ✅ Zod schema with confirm-password match
+const SignupSchema = z
+  .object({
+    fullName: z.string().min(2, "Full name is required"),
+    email: z.string().email("Enter a valid email"),
+    password: z.string().min(6, "Minimum 6 characters"),
+    confirmPassword: z.string().min(6, "Minimum 6 characters"),
+  })
+  .refine((data) => data.password === data.confirmPassword, {
+    message: "Passwords do not match",
+    path: ["confirmPassword"],
+  });
 
 const Signup = () => {
-  const navigate = useNavigate();
   const dispatch = useDispatch();
-  const { auth } = useSelector((state) => state);
-  const [showPassword, setShowPassword] = React.useState(false);
-  const [showConfirmPassword, setShowConfirmPassword] = React.useState(false);
+  const navigate = useNavigate();
+  const { auth } = useSelector((s) => s);
+
+  const [showPassword, setShowPassword] = useState(false);
+  const [showConfirmPassword, setShowConfirmPassword] = useState(false);
+
   const form = useForm({
-    resolver: "",
+    resolver: zodResolver(SignupSchema),
     defaultValues: {
       fullName: "",
       email: "",
       password: "",
       confirmPassword: "",
     },
+    mode: "onTouched",
   });
+
   const onSubmit = (data) => {
-    // Validate passwords match on the client before dispatching
-    if (data.password !== data.confirmPassword) {
-      // Shouldn't happen because button is disabled, but keep safeguard
-      toast.error("Passwords do not match", { position: "top-right" });
-      return;
-    }
-
-    // Only send the fields the backend needs
-    const payload = {
-      fullName: data.fullName,
-      email: data.email,
-      password: data.password,
-    };
-
-    dispatch(register({ payload, navigate }));
-    console.log(payload);
+    const toastId = toast.loading("Creating account...");
+    dispatch(
+      registerAction({
+        payload: {
+          fullName: data.fullName,
+          email: data.email,
+          password: data.password,
+        },
+        navigate,
+      })
+    )
+      ?.then(() =>
+        toast.success("Account created successfully!", { id: toastId })
+      )
+      ?.catch((err) =>
+        toast.error(err?.message || "Signup failed", { id: toastId })
+      );
   };
+
+  // show API errors from store
+  useEffect(() => {
+    if (auth?.error && !auth?.loading) {
+      toast.error(
+        typeof auth.error === "string"
+          ? auth.error
+          : "Signup failed. Try again."
+      );
+    }
+  }, [auth?.error, auth?.loading]);
+
   return (
-    <div className="min-h-screen flex items-center justify-center py-8">
-      <div className="w-full max-w-md p-8 rounded-2xl bg-gradient-to-b from-white/10 to-white/5 backdrop-blur-md border border-white/20 shadow-2xl">
-        <h1 className="text-4xl font-extrabold text-center mb-2 text-white drop-shadow-lg">
-          CryptoVerse
-        </h1>
-        <h2 className="text-lg text-center mb-6 text-gray-200">Register</h2>
-        <Form {...form}>
-          <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-6">
-            <FormField
-              control={form.control}
-              name="fullName"
-              render={({ field }) => (
-                <FormItem>
-                  <FormControl>
-                    <Input
-                      placeholder="Enter Full Name"
-                      className="w-full border placeholder:text-gray-700 border-gray-700 p-5"
-                      {...field}
-                    />
-                  </FormControl>
+    <Form {...form}>
+      <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-4">
+        {/* Full Name */}
+        <FormField
+          control={form.control}
+          name="fullName"
+          render={({ field }) => (
+            <FormItem>
+              <FormControl>
+                <Input
+                  placeholder="Enter Full Name"
+                  className="w-full p-3 rounded-md bg-[#0b1220]/80 border border-white/10
+                             placeholder:text-gray-300 focus:border-blue-500 focus:ring-2 focus:ring-blue-500/40"
+                  {...field}
+                />
+              </FormControl>
+              <FormMessage />
+            </FormItem>
+          )}
+        />
 
-                  <FormMessage />
-                </FormItem>
-              )}
-            />
+        {/* Email */}
+        <FormField
+          control={form.control}
+          name="email"
+          render={({ field }) => (
+            <FormItem>
+              <FormControl>
+                <Input
+                  type="email"
+                  placeholder="Enter Email"
+                  autoComplete="email"
+                  className="w-full p-3 rounded-md bg-[#0b1220]/80 border border-white/10
+                             placeholder:text-gray-300 focus:border-blue-500 focus:ring-2 focus:ring-blue-500/40"
+                  {...field}
+                />
+              </FormControl>
+              <FormMessage />
+            </FormItem>
+          )}
+        />
 
-            <FormField
-              control={form.control}
-              name="email"
-              render={({ field }) => (
-                <FormItem>
-                  <FormControl>
-                    <Input
-                      className="w-full border border-gray-700 p-5 placeholder:text-gray-700"
-                      placeholder="Enter Email"
-                      {...field}
-                    />
-                  </FormControl>
-
-                  <FormMessage />
-                </FormItem>
-              )}
-            />
-
-            <FormField
-              control={form.control}
-              name="password"
-              render={({ field }) => (
-                <FormItem>
-                  <FormControl>
-                    <div className="relative">
-                      <Input
-                        type={showPassword ? "text" : "password"}
-                        placeholder="Enter Password"
-                        className="w-full border border-gray-700 p-5 placeholder:text-gray-700 pr-12"
-                        {...field}
-                      />
-                      <button
-                        type="button"
-                        onClick={() => setShowPassword(!showPassword)}
-                        className="absolute right-3 top-1/2 transform -translate-y-1/2 text-gray-700 hover:text-gray-900"
-                      >
-                        {showPassword ? (
-                          <EyeOff size={20} />
-                        ) : (
-                          <Eye size={20} />
-                        )}
-                      </button>
-                    </div>
-                  </FormControl>
-
-                  <FormMessage />
-                </FormItem>
-              )}
-            />
-            <FormField
-              control={form.control}
-              name="confirmPassword"
-              render={({ field }) => (
-                <FormItem>
-                  <FormControl>
-                    <div className="relative">
-                      <Input
-                        placeholder="Confirm Password"
-                        type={showConfirmPassword ? "text" : "password"}
-                        className="w-full border border-gray-700 p-5 placeholder:text-gray-700 pr-12"
-                        {...field}
-                      />
-                      <button
-                        type="button"
-                        onClick={() =>
-                          setShowConfirmPassword(!showConfirmPassword)
-                        }
-                        className="absolute right-3 top-1/2 transform -translate-y-1/2 text-gray-700 hover:text-gray-900"
-                      >
-                        {showConfirmPassword ? (
-                          <EyeOff size={20} />
-                        ) : (
-                          <Eye size={20} />
-                        )}
-                      </button>
-                    </div>
-                  </FormControl>
-                  <FormMessage />
-                  {/* Inline mismatch message - visible while user types */}
-                  {(() => {
-                    const password = form.watch("password");
-                    const confirm = form.watch("confirmPassword");
-                    if (confirm && confirm.length > 0 && password !== confirm) {
-                      return (
-                        <div
-                          className="mt-2 flex justify-center"
-                          role="alert"
-                          aria-live="assertive"
-                        >
-                          <span className="text-red-500 font-extrabold">
-                            Passwords do not match
-                          </span>
-                        </div>
-                      );
+        {/* Password */}
+        <FormField
+          control={form.control}
+          name="password"
+          render={({ field }) => (
+            <FormItem>
+              <FormControl>
+                <div className="relative">
+                  <Input
+                    type={showPassword ? "text" : "password"}
+                    placeholder="Enter Password"
+                    autoComplete="new-password"
+                    className="w-full p-3 pr-12 rounded-md bg-[#0b1220]/80 border border-white/10
+                               placeholder:text-gray-300 focus:border-blue-500 focus:ring-2 focus:ring-blue-500/40"
+                    {...field}
+                  />
+                  <button
+                    type="button"
+                    onClick={() => setShowPassword((s) => !s)}
+                    className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-300 hover:text-white text-xl"
+                    aria-label={
+                      showPassword ? "Hide password" : "Show password"
                     }
+                  >
+                    {showPassword ? "🙈" : "👁️"}
+                  </button>
+                </div>
+              </FormControl>
+              <FormMessage />
+            </FormItem>
+          )}
+        />
 
-                    // show attractive success pill when passwords match
-                    if (confirm && confirm.length > 0 && password === confirm) {
-                      return (
-                        <div
-                          className="mt-2 flex justify-center"
-                          role="status"
-                          aria-live="polite"
-                        >
-                          <span className="text-green-600 font-extrabold">
-                            Passwords match
-                          </span>
-                        </div>
-                      );
+        {/* Confirm Password (with live match status) */}
+        <FormField
+          control={form.control}
+          name="confirmPassword"
+          render={({ field }) => (
+            <FormItem>
+              <FormControl>
+                <div className="relative">
+                  <Input
+                    type={showConfirmPassword ? "text" : "password"}
+                    placeholder="Confirm Password"
+                    autoComplete="new-password"
+                    className="w-full p-3 pr-12 rounded-md bg-[#0b1220]/80 border border-white/10
+                               placeholder:text-gray-300 focus:border-blue-500 focus:ring-2 focus:ring-blue-500/40"
+                    {...field}
+                  />
+                  <button
+                    type="button"
+                    onClick={() => setShowConfirmPassword((s) => !s)}
+                    className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-300 hover:text-white text-xl"
+                    aria-label={
+                      showConfirmPassword ? "Hide password" : "Show password"
                     }
+                  >
+                    {showConfirmPassword ? "🙈" : "👁️"}
+                  </button>
+                </div>
+              </FormControl>
+              <FormMessage />
 
-                    return null;
-                  })()}
-                </FormItem>
-              )}
-            />
+              {/* Live status under the input */}
+              {(() => {
+                const password = form.watch("password");
+                const confirm = form.watch("confirmPassword");
 
-            {(() => {
-              const fullName = form.watch("fullName");
-              const email = form.watch("email");
-              const password = form.watch("password");
-              const confirm = form.watch("confirmPassword");
-              const allFilled = fullName && email && password && confirm;
-              const passwordsMatch = password === confirm;
-              const canSubmit = allFilled && passwordsMatch && !auth.loading;
+                if (confirm && confirm.length > 0 && password !== confirm) {
+                  return (
+                    <p className="text-red-500 font-semibold text-center mt-2 animate-pulse">
+                      ❌ Passwords do not match
+                    </p>
+                  );
+                }
 
-              return (
-                <Button
-                  className="w-full py-5 font-extrabold"
-                  type="submit"
-                  disabled={!canSubmit}
-                  aria-disabled={!canSubmit}
-                >
-                  {auth.loading ? "Loading..." : "Submit"}
-                </Button>
-              );
-            })()}
-          </form>
-        </Form>
+                if (confirm && confirm.length > 0 && password === confirm) {
+                  return (
+                    <p className="text-green-500 font-bold text-center mt-2 animate-fade-in">
+                      ✅ Passwords match!
+                    </p>
+                  );
+                }
 
-        <div className="mt-4 text-center text-sm text-gray-600">
-          Already have an account?{" "}
+                return null;
+              })()}
+            </FormItem>
+          )}
+        />
+
+        {/* Submit */}
+        <Button
+          type="submit"
+          disabled={auth?.loading}
+          className="w-full py-3 font-semibold bg-[#3B5BFF] hover:bg-[#304de6]"
+        >
+          {auth?.loading ? "Creating account..." : "Register"}
+        </Button>
+
+        {/* Link to Signin */}
+        <div className="text-center mt-3">
+          <span className="text-gray-300">Already have an account?</span>
           <Link
             to="/signin"
-            className="font-semibold text-blue-600 hover:text-blue-500"
+            className="ml-2 underline underline-offset-4 hover:opacity-90 font-medium"
           >
-            Sign In
+            Login
           </Link>
         </div>
-      </div>
-    </div>
+      </form>
+    </Form>
   );
-  <div className="mt-4 text-center text-sm text-gray-200">
-    Already have an account?{" "}
-    <a href="/signin" className="font-semibold underline">
-      Login
-    </a>
-  </div>;
 };
 
 export default Signup;

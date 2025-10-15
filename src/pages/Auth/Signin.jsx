@@ -1,126 +1,145 @@
-// import React from 'react'
-
-// const Signin = () => {
-//   return (
-//     <div>Signin</div>
-//   )
-// }
-
-// export default Signin
+import React, { useState, useEffect } from "react";
+import { useDispatch, useSelector } from "react-redux";
+import { useNavigate, Link } from "react-router-dom";
+import { useForm } from "react-hook-form";
+import { z } from "zod";
+import { zodResolver } from "@hookform/resolvers/zod";
 
 import {
   Form,
-  FormControl,
-  FormDescription,
   FormField,
   FormItem,
-  FormLabel,
+  FormControl,
   FormMessage,
 } from "@/components/ui/form";
-import { useForm } from "react-hook-form";
-import React from "react";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
-import { DialogClose } from "@radix-ui/react-dialog";
-import { Eye, EyeOff } from "lucide-react";
-import { useDispatch, useSelector } from "react-redux";
+
+import { toast } from "sonner"; // ✅ Sonner toast
 import { login } from "@/State/Auth/Action";
-import { useNavigate, Link } from "react-router-dom";
+
+// ✅ Zod Validation Schema
+const SigninSchema = z.object({
+  email: z.string().email("Enter a valid email"),
+  password: z.string().min(6, "Minimum 6 characters"),
+});
 
 const Signin = () => {
-  const navigate = useNavigate();
   const dispatch = useDispatch();
+  const navigate = useNavigate();
   const { auth } = useSelector((state) => state);
-  const [showPassword, setShowPassword] = React.useState(false);
+
+  const [showPassword, setShowPassword] = useState(false);
+
   const form = useForm({
-    resolver: "",
-    defaultValues: {
-      email: "",
-      password: "",
-    },
+    resolver: zodResolver(SigninSchema),
+    defaultValues: { email: "", password: "" },
   });
+
+  // ✅ Submit function
   const onSubmit = (data) => {
-    dispatch(login({ data, navigate }));
-    console.log(data);
+    const toastId = toast.loading("Signing in...");
+    dispatch(login({ data, navigate }))
+      ?.then(() => toast.success("Welcome back!", { id: toastId }))
+      ?.catch((err) =>
+        toast.error(err?.message || "Login failed", { id: toastId })
+      );
   };
+
+  // ✅ Watch for auth errors
+  useEffect(() => {
+    if (auth.error && !auth.loading) {
+      toast.error(
+        typeof auth.error === "string" ? auth.error : "Login failed. Try again."
+      );
+    }
+  }, [auth.error, auth.loading]);
+
   return (
-    <div className="min-h-screen flex items-center justify-center py-8">
-      <div className="w-full max-w-md p-8 bg-white/80 dark:bg-black/60 rounded-lg shadow-md">
-        <h1 className="text-3xl font-bold text-center mb-2 text-black">CryptoVerse</h1>
-        <h2 className="text-xl font-semibold text-center mb-6 text-gray-700">Login</h2>
-        <Form {...form}>
-          <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-6">
-          <FormField
-            control={form.control}
-            name="email"
-            render={({ field }) => (
-              <FormItem>
-                <FormControl>
+    <Form {...form}>
+      <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-4">
+        {/* Email Field */}
+        <FormField
+          control={form.control}
+          name="email"
+          render={({ field }) => (
+            <FormItem>
+              <FormControl>
+                <Input
+                  type="email"
+                  placeholder="Enter Email"
+                  autoComplete="email"
+                  className="w-full p-3 rounded-md bg-[#0b1220]/80 border border-white/10
+                             placeholder:text-gray-300 focus:border-blue-500 focus:ring-2 focus:ring-blue-500/40"
+                  {...field}
+                />
+              </FormControl>
+              <FormMessage />
+            </FormItem>
+          )}
+        />
+
+        {/* Password Field */}
+        <FormField
+          control={form.control}
+          name="password"
+          render={({ field }) => (
+            <FormItem>
+              <FormControl>
+                <div className="relative">
                   <Input
-                    className="w-full border border-gray-700 p-5 placeholder:text-gray-700"
-                    placeholder="Enter Email"
+                    type={showPassword ? "text" : "password"}
+                    placeholder="Enter Password"
+                    autoComplete="current-password"
+                    className="w-full p-3 pr-12 rounded-md bg-[#0b1220]/80 border border-white/10
+                               placeholder:text-gray-300 focus:border-blue-500 focus:ring-2 focus:ring-blue-500/40"
                     {...field}
                   />
-                </FormControl>
+                  {/* 👁 / 🙈 password toggle */}
+                  <button
+                    type="button"
+                    onClick={() => setShowPassword((s) => !s)}
+                    className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-300 hover:text-white text-xl"
+                  >
+                    {showPassword ? "🙈" : "👁️"}
+                  </button>
+                </div>
+              </FormControl>
+              <FormMessage />
+            </FormItem>
+          )}
+        />
 
-                <FormMessage />
-              </FormItem>
-            )}
-          />
+        {/* Submit Button */}
+        <Button
+          type="submit"
+          disabled={auth?.loading}
+          className="w-full py-3 font-semibold bg-[#3B5BFF] hover:bg-[#304de6]"
+        >
+          {auth?.loading ? "Signing in..." : "Login"}
+        </Button>
 
-          <FormField
-            control={form.control}
-            name="password"
-            render={({ field }) => (
-              <FormItem>
-                <FormControl>
-                  <div className="relative">
-                    <Input
-                      type={showPassword ? "text" : "password"}
-                      placeholder="Enter Password"
-                      className="w-full border border-gray-700 p-5 placeholder:text-gray-700 pr-12"
-                      {...field}
-                    />
-                    <button
-                      type="button"
-                      onClick={() => setShowPassword(!showPassword)}
-                      className="absolute right-3 top-1/2 transform -translate-y-1/2 text-gray-700 hover:text-gray-900"
-                    >
-                      {showPassword ? <EyeOff size={20} /> : <Eye size={20} />}
-                    </button>
-                  </div>
-                </FormControl>
-
-                <FormMessage />
-              </FormItem>
-            )}
-          />
-          {/* confirmPassword removed for login */}
-
-          <Button
-            className="w-full py-5 font-extrabold"
-            type="submit"
-            disabled={auth.loading}
+        {/* Links */}
+        <div className="text-center mt-3">
+          <span className="text-gray-300">Don't have an account?</span>
+          <Link
+            to="/signup"
+            className="ml-2 underline underline-offset-4 hover:opacity-90 font-medium"
           >
-            {auth.loading ? "Loading..." : "Submit"}
-          </Button>
-          </form>
-        </Form>
-        
-        <div className="mt-4 text-center text-sm text-gray-600">
-          Don't have an account?{' '}
-          <Link to="/signup" className="font-semibold text-blue-600 hover:text-blue-500">
             Sign Up
           </Link>
         </div>
-        
-        <div className="mt-3 text-center">
-          <Link to="/forgot-password" className="text-sm text-blue-600 hover:text-blue-500 font-medium">
+
+        <div className="text-center mt-2">
+          <Link
+            to="/forgot-password"
+            className="text-sm underline opacity-80 hover:opacity-100"
+          >
             Forgot Password?
           </Link>
         </div>
-      </div>
-    </div>
+      </form>
+    </Form>
   );
 };
 

@@ -12,8 +12,12 @@ import { BookmarkIcon, DotIcon } from "lucide-react";
 import React from "react";
 import TradingForm from "./TradingForm";
 import StockChart from "../Home/StockChart";
+import { useDispatch } from "react-redux";
 
 const StockDetails = () => {
+
+  const dispatch = useDispatch();
+
   return (
     <div className="p-5 mt-5">
       <div className="flex justify-between">

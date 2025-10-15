@@ -53,9 +53,9 @@ const Signup = () => {
   };
   return (
     <div className="min-h-screen flex items-center justify-center py-8">
-      <div className="w-full max-w-md p-8 bg-white/80 dark:bg-black/60 rounded-lg shadow-md">
-        <h1 className="text-3xl font-bold text-center mb-2 text-black">CryptoVerse</h1>
-        <h2 className="text-xl font-semibold text-center mb-6 text-gray-700">Register</h2>
+        <div className="w-full max-w-md p-8 rounded-2xl bg-gradient-to-b from-white/10 to-white/5 backdrop-blur-md border border-white/20 shadow-2xl">
+          <h1 className="text-4xl font-extrabold text-center mb-2 text-white drop-shadow-lg">CryptoVerse</h1>
+          <h2 className="text-lg text-center mb-6 text-gray-200">Register</h2>
         <Form {...form}>
           <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-6">
           <FormField
@@ -209,6 +209,10 @@ const Signup = () => {
       </div>
     </div>
   );
+              <div className="mt-4 text-center text-sm text-gray-200">
+                Already have an account?{' '}
+                <a href="/signin" className="font-semibold underline">Login</a>
+              </div>
 };
 
 export default Signup;

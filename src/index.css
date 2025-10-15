@@ -30,7 +30,7 @@ body {
 }
 
 body.has-auth-bg {
-  background-image: url('/CrytoVerse.png');
+  background-image: url("/CrytoVerse.png");
   background-position: center;
   background-size: cover;
   background-repeat: no-repeat;

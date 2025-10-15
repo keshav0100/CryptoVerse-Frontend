@@ -9,14 +9,20 @@ import { Avatar, AvatarImage } from "@/components/ui/avatar";
 import { Button } from "@/components/ui/button";
 import { BookmarkFilledIcon } from "@radix-ui/react-icons";
 import { BookmarkIcon, DotIcon } from "lucide-react";
-import React from "react";
+import React, { useEffect } from "react";
 import TradingForm from "./TradingForm";
 import StockChart from "../Home/StockChart";
 import { useDispatch } from "react-redux";
+import { useParams } from "react-router-dom";
+import { fetchCoinDetails } from "@/State/Coin/Action";
 
 const StockDetails = () => {
-
   const dispatch = useDispatch();
+  const { id } = useParams();
+
+  useEffect(() => {
+    dispatch(fetchCoinDetails({ coinId: id, jwt: localStorage.getItem("jwt") }));
+  }, [id]);
 
   return (
     <div className="p-5 mt-5">

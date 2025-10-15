@@ -30,7 +30,7 @@ const AssetTable = ({ coin, category }) => {
           <TableHead className="font-extrabold">SYMBOL</TableHead>
           <TableHead className="font-extrabold">VOLUME</TableHead>
           <TableHead className="font-extrabold">MARKET CAP</TableHead>
-          <TableHead className="font-extrabold">24 Hour Percentage</TableHead>
+          <TableHead className="font-extrabold">Last 24 Hour Percentage</TableHead>
           <TableHead className="text-right font-extrabold">PRICE</TableHead>
         </TableRow>
       </TableHeader>

@@ -28,9 +28,11 @@ const AssetTable = ({ coin, category }) => {
         <TableRow>
           <TableHead className="w-[100px] font-extrabold">Coin</TableHead>
           <TableHead className="font-extrabold">SYMBOL</TableHead>
-          <TableHead className="font-extrabold">VOLUME</TableHead>
+          {/* <TableHead className="font-extrabold">VOLUME</TableHead> */}
           <TableHead className="font-extrabold">MARKET CAP</TableHead>
-          <TableHead className="font-extrabold">Last 24 Hour Percentage</TableHead>
+          <TableHead className="font-extrabold">
+            Last 24 Hour Percentage
+          </TableHead>
           <TableHead className="text-right font-extrabold">PRICE</TableHead>
         </TableRow>
       </TableHeader>
@@ -50,9 +52,9 @@ const AssetTable = ({ coin, category }) => {
               </div>
             </TableCell>
             <TableCell>{item.symbol}</TableCell>
-            <TableCell>{item.total_volume}</TableCell>
+            {/* <TableCell>{item.total_volume}</TableCell> */}
             <TableCell>{item.market_cap}</TableCell>
-            <TableCell>{item.market_cap_change_percentage_24h}</TableCell>
+            <TableCell>{item.market_cap_change_percentage_24h} %</TableCell>
             <TableCell className="text-right">$ {item.current_price}</TableCell>
           </TableRow>
         ))}

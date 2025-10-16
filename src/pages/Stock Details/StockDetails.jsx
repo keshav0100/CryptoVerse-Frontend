@@ -39,6 +39,19 @@ const StockDetails = () => {
     }
   }, [coin]);
 
+  const capChangePercent =
+    coin.coinDetails?.market_data?.market_cap_change_percentage_24h;
+  const capChangeValue =
+    coin.coinDetails?.market_data?.market_cap_change_24h_in_currency?.inr; // ✅ adjust to `.usd` if needed
+
+  const isNegative = capChangePercent < 0;
+
+  const priceDropUSD =
+    coin.coinDetails?.market_data?.price_change_24h_in_currency?.usd;
+  const priceDropPercent =
+    coin.coinDetails?.market_data?.price_change_percentage_24h;
+  const isPriceNegative = priceDropUSD < 0;
+
   return (
     <div className="p-5 mt-5">
       <div className="flex justify-between">
@@ -52,15 +65,29 @@ const StockDetails = () => {
             <div className="flex items-center gap-2">
               <p>{coin.coinDetails?.name}</p>
               <DotIcon className="text-gray-600" />
-              <p>{coin.coinDetails?.symbol}</p>
+              <p>{coin.coinDetails?.symbol.toUpperCase()}</p>
             </div>
             <div className="flex items-end gap-2">
-              <p className="text-xl font-bold">
-                $ {coin.coinDetails?.market_data?.current_price?.usd}
+              <p className="text-xl font-extrabold">
+                ${" "}
+                {coin.coinDetails?.market_data?.current_price?.usd.toLocaleString(
+                  "en-US"
+                )}
               </p>
-              <p className="text-red-500">
-                <span>-1345.324</span>
-                <span>(-0.0053%)</span>
+              <p
+                className={`${
+                  isNegative ? "text-red-500" : "text-green-500"
+                } font-extrabold`}
+              >
+                <span>${priceDropUSD ? priceDropUSD.toFixed(2) : "--"}</span>
+                <span>
+                  (
+                  {
+                    coin.coinDetails?.market_data
+                      ?.market_cap_change_percentage_24h
+                  }
+                  ) %
+                </span>
               </p>
             </div>
           </div>
@@ -88,7 +115,7 @@ const StockDetails = () => {
         </div>
       </div>
       <div className="mt-14">
-        <StockChart />
+        <StockChart coinId={id} />
       </div>
     </div>
   );

@@ -1,8 +1,12 @@
 import { Button } from "@/components/ui/button";
-import React from "react";
+import { fetchMarketChart } from "@/State/Coin/Action";
+import React, { use, useEffect } from "react";
 import ReactApexChart from "react-apexcharts";
+import { useDispatch, useSelector } from "react-redux";
 
-const StockChart = () => {
+const StockChart = ({ coinId }) => {
+  const dispatch = useDispatch();
+  const { coin } = useSelector((store) => store);
   const [activeLabel, setActiveLabel] = React.useState("1 Day");
 
   const timeSeries = [
@@ -28,33 +32,7 @@ const StockChart = () => {
 
   const series = [
     {
-      data: [
-        [1640995200000, 47000],
-        [1641081600000, 47500],
-        [1641168000000, 46800],
-        [1641254400000, 47200],
-        [1641340800000, 46900],
-        [1641427200000, 47800],
-        [1641513600000, 48200],
-        [1641600000000, 47600],
-        [1641686400000, 48500],
-        [1641772800000, 49200],
-        [1641859200000, 48800],
-        [1641945600000, 49500],
-        [1642032000000, 50100],
-        [1642118400000, 49800],
-        [1642204800000, 51200],
-        [1642291200000, 52000],
-        [1642377600000, 51500],
-        [1642464000000, 52800],
-        [1642550400000, 53200],
-        [1642636800000, 52900],
-        [1642723200000, 54100],
-        [1642809600000, 55000],
-        [1642896000000, 54500],
-        [1642982400000, 55800],
-        [1643068800000, 56200],
-      ],
+      data: coin.marketChart.data,
     },
   ];
   const options = {
@@ -119,6 +97,12 @@ const StockChart = () => {
   const handleActiveLabelChange = (label) => {
     setActiveLabel(label);
   };
+
+  useEffect(() => {
+    dispatch(
+      fetchMarketChart({ coinId, days: 30, jwt: localStorage.getItem("jwt") })
+    );
+  }, [dispatch, coinId, activeLabel]);
 
   return (
     <div>
